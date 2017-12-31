@@ -82,7 +82,7 @@ contexts:
       captures:
         1: keyword.function.jai
     # - match: '(#\s*{{identifier}})'
-    - match: '(#(import|load|no_abc|assert|must|complete|run|through))'
+    - match: '(#(import|load|no_abc|assert|must|complete|run|through|char|file|line|caller_location|location|foreign|foreign_library|modify|body_text))'
       scope: keyword.directive.jai
     - match: '(#{{identifier}})'
       scope: invalid.jai
