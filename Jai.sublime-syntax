@@ -78,14 +78,13 @@ contexts:
       scope: keyword.cast.jai
     - match: '\b(operator)\b'
       scope: keyword.operator_keyword.jai
-    - match: \b((size_of|type_of)(_val)?|type_of|type_info)\b\s*\(
+    - match: \b((size_of|type_of)?|type_info)\b\s*\(
       captures:
         1: keyword.function.jai
-    # - match: '(#\s*{{identifier}})'
-    - match: '(#(import|load|no_abc|assert|must|complete|run|through|char|file|line|caller_location|location|foreign|foreign_library|modify|body_text))'
+    - match: '(#(import|load|no_abc|assert|must|complete|run|through|char|file|line|caller_location|location|foreign|foreign_library|modify|body_text|constructor|destructor))'
       scope: keyword.directive.jai
-    - match: '(#{{identifier}})'
-      scope: invalid.jai
+    # - match: '(#{{identifier}})'
+    #   scope: source.jai
     - match: '(\$\$)'
       scope: keyword.directive.jai
     - match: '(\$\s*{{identifier}})'
@@ -145,7 +144,7 @@ contexts:
     - include: basic-types
 
   basic-types:
-    - match: '\b((s8|s16|s32|s64|int)?|(u8|u16|u32|u64|uint)?|(float|float32|float64)?|bool|string|Any|void)\b'
+    - match: '\b((s8|s16|s32|s64|int)|(u8|u16|u32|u64|uint)|(float32|float64)|(bool|string|Any|void))\b'
       scope: storage.type.jai
 
   strings:
