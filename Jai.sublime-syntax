@@ -109,7 +109,7 @@ contexts:
       scope: keyword.operator.declaration.jai
     - match: (:[:=])
       scope: keyword.operator.assignment.jai
-    - match: \b(\.\.)\b
+    - match: (\.\.)
       scope: keyword.range.jai
 
   functions:
