@@ -74,6 +74,10 @@ contexts:
       scope: keyword.struct.jai
     - match: \b(enum)\b
       scope: keyword.enum.jai
+    - match: \b(enum_flags)\b
+      scope: keyword.enum_flags.jai
+    - match: \b(union)\b
+      scope: keyword.union.jai
     - match: \b(cast|acast|xx)\b
       scope: keyword.cast.jai
     - match: '\b(operator)\b'
@@ -81,7 +85,7 @@ contexts:
     - match: \b((size_of|type_of)?|type_info)\b\s*\(
       captures:
         1: keyword.function.jai
-    - match: '(#(import|load|no_abc|assert|must|complete|run|through|char|file|line|caller_location|location|foreign|foreign_library|modify|body_text|constructor|destructor))'
+    - match: '(#(import|load|no_abc|assert|must|complete|run|through|char|file|line|caller_location|location|foreign|foreign_library|modify|body_text|constructor|destructor|place))'
       scope: keyword.directive.jai
     # - match: '(#{{identifier}})'
     #   scope: source.jai
@@ -97,7 +101,7 @@ contexts:
       scope: keyword.operator.arrow.jai
     - match: (=>)
       scope: keyword.operator.lambda.jai
-    - match: '(\+|-|\*|/|=|\!|%|\^|&|\||&&|\|\|)=?'
+    - match: '(\+|-|\*|/|=|\!|%|\^|&|\||&&|\|\||<|>)=?'
       scope: keyword.operator.builtin.jai
     - match: '(<<|>>)=?'
       scope: keyword.operator.shift.jai
