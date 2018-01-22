@@ -54,7 +54,7 @@ contexts:
           pop: true
 
   keywords:
-    - match: \b(if|then|else|while|for|defer|return|remove|it|it_index|case)\b
+    - match: \b(if|then|else|while|for|defer|return|remove|it|it_index|case|inline|no_inline)\b
       scope: keyword.control.jai
     - match: \b(break|continue)\b
       scope: keyword.control.jai
