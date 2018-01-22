@@ -54,7 +54,7 @@ contexts:
           pop: true
 
   keywords:
-    - match: \b(if|then|else|while|for|defer|return|remove|it|it_index)\b
+    - match: \b(if|then|else|while|for|defer|return|remove|it|it_index|case)\b
       scope: keyword.control.jai
     - match: \b(break|continue)\b
       scope: keyword.control.jai
@@ -85,7 +85,7 @@ contexts:
     - match: \b((size_of|type_of)?|type_info)\b\s*\(
       captures:
         1: keyword.function.jai
-    - match: '(#(import|load|no_abc|assert|must|complete|run|through|char|file|line|caller_location|location|foreign|foreign_library|modify|body_text|constructor|destructor|place))'
+    - match: '(#(import|load|no_abc|assert|must|complete|run|through|char|file|line|caller_location|location|foreign|foreign_library|modify|body_text|constructor|destructor|place|placeholder))'
       scope: keyword.directive.jai
     # - match: '(#{{identifier}})'
     #   scope: source.jai
@@ -148,8 +148,10 @@ contexts:
     - include: basic-types
 
   basic-types:
-    - match: '\b((s8|s16|s32|s64|int)|(u8|u16|u32|u64|uint)|(float32|float64)|(bool|string|Any|void))\b'
+    - match: '\b((s8|s16|s32|s64|int)|(u8|u16|u32|u64|uint)|(float|float32|float64)|(bool|string|Any|void))\b'
       scope: storage.type.jai
+    - match: '\b(__(temporary_allocator))\b'
+      scope: support.variable.jai
 
   strings:
     - match: '"'
