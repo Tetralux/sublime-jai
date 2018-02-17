@@ -19,7 +19,7 @@ contexts:
     - include: comments
     - include: keywords
     - include: types
-    # - include: custom_styling
+    - include: variables
     - include: functions
     - include: declarations
     - include: strings
@@ -64,11 +64,11 @@ contexts:
       scope: keyword.control.jai
     - match: \b(null|true|false)\b
       scope: constant.language.jai
-    - match: (\.\d+)|(\d+\.)
+    - match: (?:(\.\d+)|(\d+\.))(?!\.)
       scope: constant.numeric.jai
-    - match: '\b(\d(\d|_)*(.(\d|_))?)((e|E)(\+|-)?\d+)?\b'
+    - match: \b(\d(\d|_)*(.(\d|_))?)((e|E)(\+|-)?\d+)?\b
       scope: constant.numeric.jai
-    - match: '\b((0b(0|1|_)+)|(0o(\d|_)+)|(0d(\d|_)+)|(0[xXhH](\h|_)+))\b'
+    - match: \b(?<!\.)((0b(0|1|_)+)|(0o(\d|_)+)|(0d(\d|_)+)|(0[xXhH](\h|_)+))\s*(?!\.)\b
       scope: constant.numeric.jai
     - match: \b(struct)\b
       scope: keyword.struct.jai
@@ -85,7 +85,7 @@ contexts:
     - match: \b((size_of|type_of)?|type_info)\b\s*\(
       captures:
         1: keyword.function.jai
-    - match: '(#(import|load|no_abc|assert|must|complete|run|through|char|file|line|caller_location|location|foreign|foreign_library|modify|body_text|constructor|destructor|place|placeholder))'
+    - match: (#(import|load|no_abc|assert|must|complete|run|through|char|filepath|line|caller_location|location|foreign_library|foreign|modify|body_text|constructor|destructor|place|placeholder|c_callback))
       scope: keyword.directive.jai
     # - match: '(#{{identifier}})'
     #   scope: source.jai
@@ -150,8 +150,6 @@ contexts:
   basic-types:
     - match: '\b((s8|s16|s32|s64|int)|(u8|u16|u32|u64|uint)|(float|float32|float64)|(bool|string|Any|void))\b'
       scope: storage.type.jai
-    - match: '\b(__(temporary_allocator))\b'
-      scope: support.variable.jai
 
   strings:
     - match: '"'
@@ -167,12 +165,16 @@ contexts:
       scope: keyword.infix.jai
 
   string-escaped-char:
-    - match: '\\(\\|[abfnrutv''"]|x\h{2}|u\h{4}|U\h{8}|[0-7]{3})'
+    - match: \\(\\|[0nrte"]|[0-7]{3})
       scope: constant.character.escape.jai
     - match: \\.
       scope: invalid.illegal.unknown-escape.jai
 
   string-format:
-    - match: '%\d*'
+    - match: '(?<!%)((%\d)|%)(?!%)'
       scope: string.format.jai
-      # scope: keyword.other.jai
+      # scope: constant.character.escape.jai
+
+  variables:
+    - match: \b__(temporary_allocator)\b
+      scope: support.type.jai
