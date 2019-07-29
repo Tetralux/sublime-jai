@@ -4,12 +4,12 @@
 name: Jai
 file_extensions:
   - jai
-  - Jai
 first_line_match: "-[*]-( Mode:)? Jai -[*]-"
 scope: source.jai
 variables:
   identifier: '\b[[:alpha:]_][[:alnum:]_]*\b'
   type_chars: '[[:alnum:]\s,._^<>\[\]-]'
+  screaming_identifier: '\b[A-Z_](?![a-z])[A-Z_0-9]+\b'
 
 contexts:
   main:
@@ -17,17 +17,16 @@ contexts:
 
   global:
     - include: comments
-    - include: keywords
     - include: types
-    - include: variables
-    - include: functions
-    - include: declarations
+    - include: keywords
+    - include: functions-and-declarations
+    # - include: custom_styling
     - include: strings
     - include: string-escaped-char
 
 
   custom_styling:
-    - match: \b([A-Z_](?![a-z])[A-Z_0-9]+)\b
+    - match: \b({{screaming_identifier}})\b
       captures:
         1: storage.constant.jai
 
@@ -52,93 +51,82 @@ contexts:
         - meta_scope: comment.line.double-slash.jai
         - match: \n
           pop: true
+    - match: "#!"
+      scope: punctuation.definition.comment.jai
+      push:
+        - meta_scope: comment.line.double-slash.jai
+        - match: \n
+          pop: true
 
   keywords:
-    - match: \b(if|then|else|while|for|defer|return|remove|it|it_index|case|inline|no_inline)\b
+    - match: \b(#?if|else|defer|return)\b
       scope: keyword.control.jai
-    - match: \b(break|continue)\b
+    - match: \b(for|while|break|continue|case|it|it_index)\b
       scope: keyword.control.jai
-    - match: \b(using)\b
+    - match: \b(using|inline|no_inline)\b
       scope: keyword.control.jai
-    - match: \b(push_context)\b
-      scope: keyword.control.jai
+    - match: \b(context)\b
+      scope: keyword.operator.jai
     - match: \b(null|true|false)\b
       scope: constant.language.jai
-    - match: (?:(\.\d+)|(\d+\.))(?!\.)
+    - match: '(-|\+)?(\d(\d|_)*(.\d(\d|_)*)?)((e|E)(\+|-)?\d+)?[ijk]?\b'
       scope: constant.numeric.jai
-    - match: \b(\d(\d|_)*(.(\d|_))?)((e|E)(\+|-)?\d+)?\b
+    - match: '\b((0b(0|1|_)+)|(0o(\d|_)+)|(0d(\d|_)+)|(0[xXh](\h|_)+))[i]?\b'
       scope: constant.numeric.jai
-    - match: \b(?<!\.)((0b(0|1|_)+)|(0o(\d|_)+)|(0d(\d|_)+)|(0[xXhH](\h|_)+))\s*(?!\.)\b
+    - match: '---'
       scope: constant.numeric.jai
-    - match: \b(struct)\b
-      scope: keyword.struct.jai
-    - match: \b(enum)\b
-      scope: keyword.enum.jai
-    - match: \b(enum_flags)\b
-      scope: keyword.enum_flags.jai
-    - match: \b(union)\b
-      scope: keyword.union.jai
+    - match: \b(struct|enum|union)\b
+      scope: storage.type.jai
     - match: \b(cast|acast|xx)\b
-      scope: keyword.cast.jai
-    - match: '\b(operator)\b'
-      scope: keyword.operator_keyword.jai
-    - match: \b((size_of|type_of)?|type_info)\b\s*\(
+      scope: keyword.function.jai
+    - match: '@({{identifier}})'
+      scope: support.type.jai
+    - match: '#({{identifier}})'
+      scope: keyword.other.directive.jai
+    - match: ->
+      scope: keyword.operator.jai
+    - match: \!
+      scope: keyword.operator.jai
+    - match: :=?
+      scope: keyword.operator.assignment.jai
+    - match: (\||&|=|\+$![0-9]|-$![0-9]|\*|/|\<|>)=?
+      scope: keyword.operator.jai
+
+  functions-and-declarations:
+    - match: '\b({{identifier}})\s*([:]\s*[:])\s*\('
+      captures:
+        1: meta.function.jai entity.name.function.jai
+        2: keyword.operator.jai
+    - match: '\b({{identifier}})\s*[:]\s*[:]\s*(inline|no_inline)\s+\('
+      captures:
+        1: meta.function.jai entity.name.function.jai
+        2: keyword.control.jai
+        3: storage.type.jai
+    - match: \b(size_of|type_of|type_info)\b\s*\(
       captures:
         1: keyword.function.jai
-    - match: (#(import|load|no_abc|assert|must|complete|run|through|char|filepath|line|caller_location|location|foreign_library|foreign|modify|body_text|constructor|destructor|place|placeholder|c_callback))
-      scope: keyword.directive.jai
-    # - match: '(#{{identifier}})'
-    #   scope: source.jai
-    - match: '(\$\$)'
-      scope: keyword.directive.jai
-    - match: '(\$\s*{{identifier}})'
-      scope: keyword.template.jai
-    - match: '(@\s*{{identifier}})'
-      scope: keyword.note.jai
-    - match: \b(context)\b
-      scope: keyword.operator.context.jai
-    - match: '->'
-      scope: keyword.operator.arrow.jai
-    - match: (=>)
-      scope: keyword.operator.lambda.jai
-    - match: '(\+|-|\*|/|=|\!|%|\^|&|\||&&|\|\||<|>)=?'
-      scope: keyword.operator.builtin.jai
-    - match: '(<<|>>)=?'
-      scope: keyword.operator.shift.jai
-    - match: (:)
-      scope: keyword.operator.declaration.jai
-    - match: (:[:=])
-      scope: keyword.operator.assignment.jai
-    - match: (\.\.)
-      scope: keyword.range.jai
-
-  functions:
-    - match: ({{identifier}})\s*(:\s*:)\s*{{identifier}}\s*.*(=>)
+    - match: ({{identifier}})\s*[!]?\s*[\(]
       captures:
-        1: meta.function.jai entity.name.function.jai
-        2: keyword.operator.assigment.jai
-        3: keyword.operator.lambda.jai
-    - match: ({{identifier}})\s*(:\s*:)\s*(inline|no_inline)?\s*\(
-      captures:
-        1: meta.function.jai entity.name.function.jai
-        2: keyword.operator.assigment.jai
-        3: keyword.jai
-    - match: ({{identifier}})\s*\(
-      captures:
-        1: meta.function.jai entity.name.function.jai
-
-  declarations:
-    - match: ({{identifier}})\s*(:\s*:)\s*(struct|enum(\s*{{identifier}}))\s*\{
+        1: support.function.jai
+    - match: '\b({{identifier}})\s*[:]\s*[:]\s*(struct|union|enum)'
       captures:
         1: meta.type.jai entity.name.type.jai
+        2: storage.type.jai
+    - match: '\b({{identifier}})\s*[:]\s*[:]\s*([#]\s*type)'
+      captures:
+        1: meta.type.jai entity.name.type.jai
+        2: keyword.tag.jai
+    - match: '\b({{identifier}})\s*([:]\s*[:])\s*'
+      captures:
+        1: meta.constant.jai entity.name.type.jai
         2: keyword.operator.jai
-        3: keyword.control.jai
-      push:
-        - match: ''
-          pop: true
-        - include: types
 
   types:
+    - match: '\b(struct|enum|union)\b(?:(\{)(\}))?'
+      captures:
+        1: storage.type.jai
+        2: meta.block.jai punctuation.definition.block.begin.jai
+        3: meta.block.jai punctuation.definition.block.end.jai
     - match: (\[)(\d*)(\])(?=[[:alpha:]_])
       scope: meta.brackets.jai
       captures:
@@ -146,9 +134,23 @@ contexts:
         2: constant.numeric.jai
         3: punctuation.definition.brackets.end.jai
     - include: basic-types
+    - match: '\$\s*({{identifier}})'
+      scope: storage.type.jai
 
   basic-types:
-    - match: '\b((s8|s16|s32|s64|int)|(u8|u16|u32|u64|uint)|(float|float32|float64)|(bool|string|Any|void))\b'
+    - match: '\b(s8|s16|s32|s64|s128|int)\b'
+      scope: storage.type.jai
+    - match: '\b(u8|u16|u32|u64|u128|uint)\b'
+      scope: storage.type.jai
+    - match: '\b(float|float32|float64)\b'
+      scope: storage.type.jai
+    - match: '\b(bool)\b'
+      scope: storage.type.jai
+    - match: '\b(string)\b'
+      scope: storage.type.jai
+    - match: '\b(void)\b'
+      scope: storage.type.jai
+    - match: '\b(Any)\b'
       scope: storage.type.jai
 
   strings:
@@ -160,21 +162,24 @@ contexts:
           scope: punctuation.definition.string.end.jai
           pop: true
         - include: string-escaped-char
-        - include: string-format
-    - match: "'({{identifier}})'?"
-      scope: keyword.infix.jai
+    - match: "`"
+      scope: punctuation.definition.string.begin.jai
+      push:
+        - meta_scope: string.quoted.raw.jai
+        - match: "`"
+          scope: punctuation.definition.string.end.jai
+          pop: true
+    - match: "'"
+      scope: punctuation.definition.string.begin.jai
+      push:
+        - meta_scope: string.quoted.raw.jai
+        - match: "'"
+          scope: punctuation.definition.string.end.jai
+          pop: true
+        - include: string-escaped-char
 
   string-escaped-char:
-    - match: \\(\\|[0nrte"]|[0-7]{3})
+    - match: '\\(\\|[nrt''"]|x\h{2}|u\h{4}|U\h{8}|[0-7]{3})'
       scope: constant.character.escape.jai
     - match: \\.
       scope: invalid.illegal.unknown-escape.jai
-
-  string-format:
-    - match: '(?<!%)((%\d)|%)(?!%)'
-      scope: string.format.jai
-      # scope: constant.character.escape.jai
-
-  variables:
-    - match: \b__(temporary_allocator)\b
-      scope: support.type.jai
