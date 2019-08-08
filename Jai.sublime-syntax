@@ -89,7 +89,7 @@ contexts:
       scope: keyword.function.jai
     - match: '@({{identifier}})'
       scope: support.type.jai
-    - match: '#(import|load|no_abc|assert|must|complete|run|through|char|filepath|line|caller_location|location|foreign_library|foreign|modify|body_text|placeholder|c_callback|expand)'
+    - match: '#(import|load|no_abc|assert|must|complete|run|through|char|filepath|line|caller_location|location|foreign_library|foreign|modify|body_text|placeholder|c_call|expand)'
       scope: keyword.other.directive.jai
     - match: ->
       scope: keyword.operator.jai
