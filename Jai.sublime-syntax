@@ -60,15 +60,14 @@ contexts:
           pop: true
 
   keywords:
-    - match: \b(#?if|else|defer|return)\b
+    - match: \b(#?if|then|else|defer|return)\b
       scope: keyword.control.jai
     - match: \b(while|for|break|continue|remove|case)\b
       scope: keyword.control.jai
     - match: \b(using|inline|no_inline)\b
       scope: keyword.control.jai
     - match: \b(context|it|it_index)\b
-      # scope: support.type.jai
-      scope: keyword.other.jai
+      scope: keyword.control.jai
     - match: \b(null|true|false)\b
       scope: constant.language.jai
     - match: '(\d*)*(\.\.)(\d*)*'
@@ -82,14 +81,14 @@ contexts:
     - match: \b(((0b(0|1|_)+)|(0o(\d|_)+)|(0d(\d|_)+)|(0[xXhH](\h|_)+)))\b
       scope: constant.numeric.jai
     - match: '---'
-      scope: constant.numeric.jai
+      scope: constant.language.jai
     - match: \b(struct|enum|enum_flags|union|operator|push_context)\b
       scope: storage.type.jai
     - match: \b(cast|acast|xx)\b
       scope: keyword.function.jai
     - match: '@({{identifier}})'
       scope: support.type.jai
-    - match: '#(import|load|no_abc|assert|must|complete|run|through|char|filepath|line|caller_location|location|foreign_library|foreign|modify|body_text|placeholder|c_call|expand)'
+    - match: '#(import|load|no_abc|assert|must|complete|run|through|char|filepath|line|caller_location|location|foreign_library|foreign|modify|body_text|placeholder|c_call|expand|program_export|progam_import)'
       scope: keyword.other.directive.jai
     - match: ->
       scope: keyword.operator.jai
@@ -116,7 +115,9 @@ contexts:
         1: meta.function.jai entity.name.function.jai
         2: keyword.operator.jai
         3: keyword.control.jai
-        4: storage.type.jai
+    - match: '\b({{identifier}})\s*\('
+      captures:
+        1: meta.function-call.jai variable.function.jai
     - match: \b(size_of|type_of|type_info)\b\s*\(
       captures:
         1: keyword.function.jai
