@@ -70,16 +70,16 @@ contexts:
       scope: keyword.control.jai
     - match: \b(null|true|false)\b
       scope: constant.language.jai
+    - match: '\b((0b(0|1|_)+)|(0o([0-7_])+)|(0d([0-9_])+)|(0[xXhH]([0-9a-fA-F_])+))\b'
+      scope: constant.numeric.jai
+    - match: '(?<!\w)(-|\+)?(\.\d(\d|_)*|(\d(\d|_)*)\.?)((e|E)(\+|-)?\d+)?[ijk]?'
+      scope: constant.numeric.jai
     - match: '(\d*)*(\.\.)(\d*)*'
       captures:
         "1": constant.numeric.jai
         "2": keyword.operator.jai
         "3": constant.numeric.jai
-    - match: '(?<!\w)(-|\+)?(\.\d(\d|_)*|(\d(\d|_)*)\.?)((e|E)(\+|-)?\d+)?[ijk]?'
-      scope: constant.numeric.jai
 
-    - match: \b(((0b(0|1|_)+)|(0o(\d|_)+)|(0d(\d|_)+)|(0[xXhH](\h|_)+)))\b
-      scope: constant.numeric.jai
     - match: '---'
       scope: constant.language.jai
     - match: \b(struct|enum|enum_flags|union|operator|push_context)\b
@@ -88,11 +88,15 @@ contexts:
       scope: keyword.function.jai
     - match: '@({{identifier}})'
       scope: support.type.jai
-    - match: '#(import|load|no_abc|assert|must|complete|run|run_and_insert|through|char|filepath|line|caller_location|location|foreign_library|foreign|modify|placeholder|c_call|expand|program_export|progam_import)'
+    - match: '#(import|load|no_abc|assert|must|complete|run|run_and_insert|through|char|filepath|line|caller_location|location|foreign_library|foreign|modify|placeholder|c_call|expand|program_export|program_import|align)'
       scope: keyword.other.directive.jai
     - match: ->
       scope: keyword.operator.jai
-    - match: \!
+    - match: \!=?
+      scope: keyword.operator.jai
+    - match: \>\>\>?
+      scope: keyword.operator.jai
+    - match: \<\<\<?
       scope: keyword.operator.jai
     - match: :=?
       scope: keyword.operator.assignment.jai
@@ -187,7 +191,7 @@ contexts:
           scope: punctuation.definition.string.end.jai
           pop: true
         - include: string-escaped-char
-    
+
   string-escaped-char:
     - match: '\\(\\|[0nrt"]|x\h{2}|u\h{4}|U\h{8}|[0-7]{3})'
       scope: constant.character.escape.jai
